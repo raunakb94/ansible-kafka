@@ -1,0 +1,39 @@
+---
+- name: Updating Machine
+  action: command yum -y update
+
+- name: Installing Xfs Program
+  action: yum pkg=xfsprogs state=latest
+
+
+- name: format new volume
+  filesystem: fstype=xfs dev={{drive_path}} force=no
+
+
+- name: edit fstab and mount the vol
+  action: mount name={{mount_dir}} src={{drive_path}} opts=noatime fstype=xfs state=mounted
+
+
+- name: Downloading Kafka-repo
+  get_url: url={{repo_url}} dest=/tmp/kafka.tgz
+
+- name: Creating Kafka directory
+  file: path={{kafka_path}} state=directory mode=0755
+
+- name: Unarchiving Kafkfa
+  unarchive: src=/tmp/kafka.tgz dest={{kafka_path}} creates=yes copy=no
+
+- name: Copying Configs
+  template: src=server.properties dest={{kafka_path}}/kafka_2.10-0.9.0.1/config/server.properties
+
+- name: Creating kafka-log directory
+  file: path={{log_dir}} state=directory mode=0755
+
+
+
+
+
+
+
+
+
